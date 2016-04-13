@@ -24,7 +24,7 @@ dis.addFilter("person","=","Tom Cruise");
 ```
 Then you can add a sort to your discovery
 ```sh
-di.addSort("popularity","desc");
+dis.addSort("popularity","desc");
 ```
 Now you can select which page you'd like to return the results from.
 ```sh
