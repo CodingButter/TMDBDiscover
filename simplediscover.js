@@ -6,8 +6,8 @@
 })(function()
 {
 	var API_BASE = "http://api.themoviedb.org/3/";
-	var API_KEY = document.querySelector("script[data-tmdbkey]").getAttribute(
-		"data-tmdbkey");
+	var API_KEY = document.querySelector("script[data-tmdbkey]").getAttribute("data-tmdbkey");
+	var CONFIG;
 	Discoverer = function()
 	{
 		var disc_url = API_BASE + "discover/movie";
@@ -31,6 +31,7 @@
 			rawfilters: [],
 			sort: undefined,
 			page: 1,
+			total_pages:1,
 			addFilter: function(property, cond, value)
 			{
 				this.rawfilters.push(
@@ -118,7 +119,9 @@
 					var sends = This.buildSends();
 					getJSON(disc_url, sends, function(data)
 					{
-						callback(data.results);
+						This.total_pages = data.total_pages;
+						data.config = CONFIG;
+						callback(data);
 					});
 				});
 			},
@@ -159,6 +162,11 @@
 		};
 		return obj;
 	};
+
+	getJSON(API_BASE+"configuration",{api_key:API_KEY},function(response){
+		CONFIG = response;
+	});
+
 
 	function getJSON(_url, _data, _success, _fail, _datatype, _method)
 	{
