@@ -4,30 +4,33 @@ $(document).ready(function(){
 	CREATE FILTER
 	**************/
 	window.disc = new Discoverer();
-	disc.addFilter("person","=","tom cruise");
+	disc.addFilter("person","=","kevin spacey")
 	disc.addFilter("date","<","2013");
+	disc.addFilter("date",">","2000");
 	disc.addSort("popularity","desc");
-	disc.page = 1; 
 	disc.discover(addMovies);
+
 });
 
   /************
 	Add Movies To Display;
   *************/
 function addMovies(data){
-	var totalMovies = data.length;
+	var config = data.config;
+	var results = data.results;
+	var totalMovies = results.length;
 	var cont = $("body");
-	cont.html("");
+	//cont.html("");
 	var offset = 0;
 	var i=0;
-	while(i<totalMovies && i < data.length && offset < data.length){
-		var movie = data[offset];
+	while(i<totalMovies && i < results.length && offset < results.length){
+		var movie = results[offset];
 		if(movie && movie.poster_path){
 			var title=undefined;
 			if(!movie.poster_path)title = movie.title;
-			movie.poster_path = (movie.poster_path?"http://movies.grabdata.tk/image.php?tmdb="+movie.poster_path:"http://www.directv.com/img/movies.jpg"); 
+			movie.poster_path = (movie.poster_path?config.images.base_url+config.images.poster_sizes[config.images.poster_sizes.length-1]+movie.poster_path:"http://www.directv.com/img/movies.jpg"); 
 			var anc = $("<a/>");
-			anc.attr("href","http://grabmovies.tk/movie/watch/"+ movie.id);
+			anc.attr("href","https://www.themoviedb.org/movie/"+ movie.id);
 			anc.addClass("poster");
 			var poster = $("<img/>");
 			poster.class="poster";
@@ -39,5 +42,9 @@ function addMovies(data){
 			i++;
 		}
 		offset++;
+	}
+	if(data.total_pages>disc.page){
+		disc.page = disc.page+1;
+		disc.discover(addMovies);
 	}
 }
